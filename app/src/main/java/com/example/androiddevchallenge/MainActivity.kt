@@ -17,45 +17,36 @@ package com.example.androiddevchallenge
 
 import android.os.Bundle
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.ExperimentalComposeUiApi
 import com.example.androiddevchallenge.ui.theme.MyTheme
+import kotlinx.coroutines.ObsoleteCoroutinesApi
 
 class MainActivity : AppCompatActivity() {
+
+    private val viewModel by viewModels<CountdownViewModel>()
+
+    @ExperimentalComposeUiApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             MyTheme {
-                MyApp()
+                MyApp(viewModel)
             }
         }
     }
 }
 
-// Start building your app here!
+@ObsoleteCoroutinesApi
+@ExperimentalComposeUiApi
 @Composable
-fun MyApp() {
-    Surface(color = MaterialTheme.colors.background) {
-        Text(text = "Ready... Set... GO!")
-    }
-}
-
-@Preview("Light Theme", widthDp = 360, heightDp = 640)
-@Composable
-fun LightPreview() {
-    MyTheme {
-        MyApp()
-    }
-}
-
-@Preview("Dark Theme", widthDp = 360, heightDp = 640)
-@Composable
-fun DarkPreview() {
-    MyTheme(darkTheme = true) {
-        MyApp()
-    }
+fun MyApp(viewModel: CountdownViewModel) {
+    val timerMinute: Long by viewModel.liveTime.observeAsState(0L)
+    val state: TimerState by viewModel.state.observeAsState(initial = TimerState.IDLE)
+    val percentage: Float by viewModel.percentage.observeAsState(0F)
+    CounterControls(timerMinute, percentage, state == TimerState.IDLE) { viewModel.keyPressed(it) }
 }
