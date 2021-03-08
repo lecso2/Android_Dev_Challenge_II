@@ -40,9 +40,10 @@ class CountdownViewModel : ViewModel() {
         CoroutineScope(Dispatchers.Main).launch {
             state.postValue(TimerState.TICKING)
             for (event in tickerChannel) {
-                timerTime.minus()
+                timerTime.minusSecond()
                 liveTime.postValue(timerTime.toLong())
                 percentage.postValue((counter + 1) / fullTime)
+
                 if (timerTime.isDone()) {
                     state.postValue(TimerState.IDLE)
                     break
@@ -60,14 +61,12 @@ class CountdownViewModel : ViewModel() {
     fun keyPressed(it: NumAction) {
         timerTime.let { t ->
             when (it) {
-                NumAction.MINUTE_UP -> if (t.minute < 9) t.minute++ else t.minute = 0
-                NumAction.MINUTE_DOWN -> if (t.minute > 0) t.minute-- else t.minute = 9
-                NumAction.SECOND_TENS_UP ->
-                    if (t.secondTens < 5) t.secondTens++ else t.secondTens = 0
-                NumAction.SECOND_TENS_DOWN ->
-                    if (t.secondTens > 0) t.secondTens-- else t.secondTens = 5
-                NumAction.SECOND_UP -> if (t.second < 9) t.second++ else t.second = 0
-                NumAction.SECOND_DOWN -> if (t.second > 0) t.second-- else t.second = 9
+                NumAction.MINUTE_UP -> t.plusMinute()
+                NumAction.MINUTE_DOWN -> t.minusMinute()
+                NumAction.SECOND_TENS_UP -> t.plusTens()
+                NumAction.SECOND_TENS_DOWN -> t.minusTens()
+                NumAction.SECOND_UP -> t.plusSecond()
+                NumAction.SECOND_DOWN -> t.minusSecond()
                 NumAction.STOP -> stopTimer()
                 NumAction.START -> startTimer()
             }

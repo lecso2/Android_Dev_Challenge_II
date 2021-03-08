@@ -30,6 +30,7 @@ class MainActivity : AppCompatActivity() {
 
     private val viewModel by viewModels<CountdownViewModel>()
 
+    @ObsoleteCoroutinesApi
     @ExperimentalComposeUiApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,5 +49,6 @@ fun MyApp(viewModel: CountdownViewModel) {
     val timerMinute: Long by viewModel.liveTime.observeAsState(0L)
     val state: TimerState by viewModel.state.observeAsState(initial = TimerState.IDLE)
     val percentage: Float by viewModel.percentage.observeAsState(0F)
+
     CounterControls(timerMinute, percentage, state == TimerState.IDLE) { viewModel.keyPressed(it) }
 }

@@ -15,32 +15,42 @@
  */
 package com.example.androiddevchallenge
 
-enum class TimerState {
-    TICKING,
-    IDLE
-}
-
-enum class NumAction {
-    MINUTE_UP, MINUTE_DOWN, SECOND_TENS_UP, SECOND_TENS_DOWN, SECOND_UP, SECOND_DOWN, START, STOP
-}
-
 class TimerTime {
 
-    fun minus(): TimerTime? {
-        when {
-            second > 0 -> second--
-            secondTens > 0 -> {
-                secondTens--
-                second = 9
-            }
-            minute > 0 -> {
-                minute--
-                secondTens = 5
-                second = 9
-            }
-            else -> return null
+    fun minusSecond() {
+        if (second > 0) second--
+        else minusTens()
+    }
+
+    fun minusTens() {
+        if (secondTens > 0) {
+            secondTens--
+            second = 9
+        } else minusMinute()
+    }
+
+    fun minusMinute() {
+        if (minute > 0) {
+            minute--
+            secondTens = 5
+            second = 9
         }
-        return this
+    }
+
+    fun plusSecond() {
+        if (second < 9) second++
+        else plusTens()
+    }
+
+    fun plusTens() {
+        if (secondTens < 9) {
+            secondTens++
+            second = 0
+        } else plusMinute()
+    }
+
+    fun plusMinute() {
+        if (minute < 9) minute++
     }
 
     fun isDone() = minute == 0 && secondTens == 0 && second == 0
@@ -63,4 +73,13 @@ fun fromLong(time: Long): TimerTime {
     time2 -= t.secondTens * 100
     t.second = time2.toInt()
     return t
+}
+
+enum class TimerState {
+    TICKING,
+    IDLE
+}
+
+enum class NumAction {
+    MINUTE_UP, MINUTE_DOWN, SECOND_TENS_UP, SECOND_TENS_DOWN, SECOND_UP, SECOND_DOWN, START, STOP
 }
